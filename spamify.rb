@@ -2,6 +2,7 @@
 
 require_relative 'urika'
 require_relative 'spotify'
+require_relative 'slacker'
 
 class Spamify
   TRACKRE = /^open.spotify.com\/track\/(\w+).*$/
@@ -9,6 +10,7 @@ class Spamify
   def initialize
     # Initialize spotify
     @spotify = Spotify.new()
+    @slack = Slacker.new(self)
   end
 
   def process_message(message)
@@ -32,6 +34,10 @@ class Spamify
   def add_to_playlist(tracks)
     @spotify.add_tracks(tracks)
   end
+
+  def start!
+    @slack.start!
+  end
 end
 
 if (__FILE__ == $0)
@@ -54,8 +60,6 @@ if (__FILE__ == $0)
     end
   end
 
-  unless ARGV.empty?
-    spamify = Spamify.new()
-    spamify.process_message(ARGV[0])
-  end
+  spamify = Spamify.new()
+  spamify.start!
 end
