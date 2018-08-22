@@ -13,8 +13,22 @@ class Spotify
     end
   end
 
+  def add_tracks_by_id(track_ids)
+    add_tracks(RSpotify::Track.find(track_ids))
+  end
+
+  def add_albums_by_id(album_ids)
+    albums = RSpotify::Album.find(album_ids)
+    tracks = if albums.is_a? Array
+               albums.inject([]){ |tracks, album| tracks + album.tracks }
+             else
+               album.tracks
+             end
+    add_tracks(tracks)
+  end
+
   def add_tracks(tracks)
-    @playlist.add_tracks!(RSpotify::Track.find(tracks))
+    @playlist.add_tracks!(tracks)
   end
 end
 

@@ -29,7 +29,7 @@ class Slacker
       #   puts message
       # end
     rescue => error
-      puts error.to_s
+      puts "Error: #{error}\n\t#{error.backtrace.join("\n\t")}"
     end
   end
 
