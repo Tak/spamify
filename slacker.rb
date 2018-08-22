@@ -9,6 +9,14 @@ class Slacker
       config.token = Credentials::SLACK_BOT_API_TOKEN
     end
 
+    Slack::RealTime::Client.configure do |config|
+      # Return timestamp only for latest message object of each channel.
+      config.start_options[:simple_latest] = true
+
+      # Skip unread counts for each channel.
+      config.start_options[:no_unreads] = true
+    end
+
     @client = Slack::RealTime::Client.new
     @client.on :hello do
       puts "Connected to #{@client.team.name} slack as #{@client.self.name}"
