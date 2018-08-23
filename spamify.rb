@@ -26,6 +26,8 @@ class Spamify
 
     add_tracks_to_playlist(tracks) if (!tracks.empty?)
     add_albums_to_playlist(albums) if (!albums.empty?)
+
+    !tracks.empty? || !albums.empty?
   end
 
   def self.scrape_id_from_uri_and_add_to_list(url, pattern, list)
