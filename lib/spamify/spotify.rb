@@ -13,23 +13,29 @@ module Spamify
       #   puts "Error authenticating with Spotify: #{error.to_s}\n#{error.backtrace}"
       end
     end
-  
-    def add_tracks_by_id(track_ids)
-      add_tracks(RSpotify::Track.find(track_ids))
+
+    def add_to_playlist_by_id(ids)
+      add_tracks(get_tracks_by_track_id(ids[:tracks]) +
+        get_tracks_by_album_id(ids[:albums]))
+    end
+
+    def get_tracks_by_track_id(track_ids)
+      track_ids.empty? ? [] : RSpotify::Track.find(track_ids)
     end
   
-    def add_albums_by_id(album_ids)
+    def get_tracks_by_album_id(album_ids)
+      return [] if album_ids.empty?
+
       albums = RSpotify::Album.find(album_ids)
-      tracks = if albums.is_a? Array
-                 albums.inject([]){ |tracks, album| tracks + album.tracks }
-               else
-                 album.tracks
-               end
-      add_tracks(tracks)
+      if albums.is_a? Array
+        albums.inject([]){ |tracks, album| tracks + album.tracks }
+      else
+        album.tracks
+      end
     end
   
     def add_tracks(tracks)
-      @playlist.add_tracks!(tracks)
+      @playlist.add_tracks!(tracks) unless tracks.empty?
     end
   end
 end

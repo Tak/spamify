@@ -14,7 +14,7 @@ RSpec.describe Spamify do
     ]
 
     inputs.each do |input|
-      expect(Spamify::Spamify.scrape_id_from_uri_and_add_to_list(input[0], Spamify::Spamify::TRACKRE, [])).to(
+      expect(Spamify::Spamify.scrape_id_from_uri(input[0], Spamify::Spamify::TRACKRE)).to(
         eq(input[1]))
     end
   end
@@ -28,7 +28,7 @@ RSpec.describe Spamify do
     ]
 
     inputs.each do |input|
-      expect(Spamify::Spamify.scrape_id_from_uri_and_add_to_list(input[0], Spamify::Spamify::ALBUMRE, [])).to(
+      expect(Spamify::Spamify.scrape_id_from_uri(input[0], Spamify::Spamify::ALBUMRE)).to(
           eq(input[1]))
     end
   end

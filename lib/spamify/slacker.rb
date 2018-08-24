@@ -42,7 +42,7 @@ module Spamify
           puts "\nGot direct message from #{user.name} with text '#{message.text}'\n"
         end
   
-        if @spamify.process_message(message.text)
+        @spamify.process_message(message.text) do |ids|
           # add spotify reaction if message successfully processed
           @client.web_client.reactions_add(name: 'spotify', channel: message.channel, timestamp: message.ts)
         end

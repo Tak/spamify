@@ -17,35 +17,24 @@ module Spamify
   
     def process_message(message)
       urls = Urika.get_all_urls(message)
-      tracks = []
-      albums = []
-  
-      urls.each do |url|
-        Spamify.scrape_id_from_uri_and_add_to_list(url, TRACKRE, tracks)
-        Spamify.scrape_id_from_uri_and_add_to_list(url, ALBUMRE, albums)
-      end
-  
-      add_tracks_to_playlist(tracks) if (!tracks.empty?)
-      add_albums_to_playlist(albums) if (!albums.empty?)
-  
-      !tracks.empty? || !albums.empty?
+      ids = { tracks: [], albums: [] }
+
+      ids = {
+          tracks: urls.inject([]){ |list, url| list + Spamify.scrape_id_from_uri(url, TRACKRE) },
+          albums: urls.inject([]){ |list, url| list + Spamify.scrape_id_from_uri(url, ALBUMRE) },
+      }
+
+      @spotify.add_to_playlist_by_id(ids)
+      yield(ids)
     end
   
-    def self.scrape_id_from_uri_and_add_to_list(url, pattern, list)
+    def self.scrape_id_from_uri(url, pattern)
       match = url.match(pattern)
       if match && !match.captures.empty?
-        list << match.captures[0]
+        [match.captures[0]]
       else
-        list
+        []
       end
-    end
-  
-    def add_tracks_to_playlist(tracks)
-      @spotify.add_tracks_by_id(tracks)
-    end
-  
-    def add_albums_to_playlist(albums)
-      @spotify.add_albums_by_id(albums)
     end
   
     def start!
