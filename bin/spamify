@@ -1,0 +1,6 @@
+#!/usr/bin/ruby
+
+require 'spamify'
+
+spamify = Spamify::Spamify.new()
+spamify.start!
