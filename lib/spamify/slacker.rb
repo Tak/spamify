@@ -4,6 +4,8 @@ require_relative 'credentials'
 
 module Spamify
   class Slacker
+    MAXIMUM_RETRIES = 5
+
     def initialize(spamify)
       @spamify = spamify
       Slack.configure do |config|
@@ -23,7 +25,7 @@ module Spamify
         puts "Connected to #{@client.team.name} slack as #{@client.self.name}"
       end
       @client.on(:message){ |message| process_message(message) }
-      @client.on(:closed){ |data| puts 'Connection closed' }
+      @client.on(:closed){ |data| connection_closed(data) }
     end
   
     def process_message(message)
@@ -46,6 +48,24 @@ module Spamify
         end
       rescue => error
         puts "Error: #{error}\n\t#{error.backtrace.join("\n\t")}"
+      end
+    end
+
+    def connection_closed(data)
+      puts 'Connection closed'
+      @client.stop!
+
+      # Reset last retry timestamp if it's been over a minute
+      if !@retry_timestamp || Time.now - @retry_timestamp < 60
+        @retry_count = 0
+      end
+
+      unless @retry_count > MAXIMUM_RETRIES
+        ++@retry_count
+        @retry_timestamp = Time.now
+        puts "Retrying (#{@retry_count} of #{MAXIMUM_RETRIES}) ..."
+        sleep(1)
+        start!
       end
     end
   
