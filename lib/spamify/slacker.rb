@@ -22,7 +22,7 @@ module Spamify
   
       @client = Slack::RealTime::Client.new
       @client.on :hello do
-        puts "Connected to #{@client.team.name} slack as #{@client.self.name}"
+        puts "Connected to #{@client.team.name} slack as #{@client.self.name} at #{Time.now}"
       end
       @client.on(:message){ |message| process_message(message) }
       @client.on(:closed){ |data| connection_closed(data) }
@@ -52,7 +52,7 @@ module Spamify
     end
 
     def connection_closed(data)
-      puts 'Connection closed'
+      puts "Connection closed at #{Time.now}"
       @client.stop!
 
       # Reset last retry timestamp if it's been over a minute
