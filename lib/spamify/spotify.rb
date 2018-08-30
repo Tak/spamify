@@ -35,7 +35,17 @@ module Spamify
     end
   
     def add_tracks(tracks)
-      @playlist.add_tracks!(tracks) unless tracks.empty?
+      for i in 1..3
+        begin
+          @playlist.add_tracks!(tracks) unless tracks.empty?
+          return
+        rescue => error
+          puts "Adding tracks failed: #{error}"
+          sleep(1)
+        end
+        puts 'Retrying...'
+      end
+      puts 'Failed to add tracks'
     end
   end
 end
