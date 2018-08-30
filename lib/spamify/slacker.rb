@@ -43,8 +43,10 @@ module Spamify
         end
   
         @spamify.process_message(message.text) do |ids|
-          # add spotify reaction if message successfully processed
-          @client.web_client.reactions_add(name: 'spotify', channel: message.channel, timestamp: message.ts)
+          # add spotify reaction if message resulted in successful addition
+          if ids.detect{ |key, value| !value.empty? }
+            @client.web_client.reactions_add(name: 'spotify', channel: message.channel, timestamp: message.ts)
+          end
         end
       rescue => error
         puts "Error: #{error}\n\t#{error.backtrace.join("\n\t")}"
