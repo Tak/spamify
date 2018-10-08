@@ -15,8 +15,18 @@ module Spamify
     end
 
     def add_to_playlist_by_id(ids)
-      add_tracks(get_tracks_by_track_id(ids[:tracks]) +
-        get_tracks_by_album_id(ids[:albums]))
+      for i in 1..3
+        begin
+          add_tracks(get_tracks_by_track_id(ids[:tracks]) +
+            get_tracks_by_album_id(ids[:albums]))
+          return
+        rescue => error
+          puts "Adding tracks failed: #{error}"
+          sleep(1)
+        end
+        puts 'Retrying...'
+      end
+      puts 'Failed to add tracks'
     end
 
     def get_tracks_by_track_id(track_ids)
@@ -35,17 +45,7 @@ module Spamify
     end
   
     def add_tracks(tracks)
-      for i in 1..3
-        begin
           @playlist.add_tracks!(tracks) unless tracks.empty?
-          return
-        rescue => error
-          puts "Adding tracks failed: #{error}"
-          sleep(1)
-        end
-        puts 'Retrying...'
-      end
-      puts 'Failed to add tracks'
     end
   end
 end
