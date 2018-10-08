@@ -55,7 +55,6 @@ module Spamify
 
     def connection_closed(data)
       puts "Connection closed at #{Time.now}"
-      @client.stop!
 
       # Reset last retry timestamp if it's been over a minute
       if !@retry_timestamp || Time.now - @retry_timestamp < 60
@@ -72,7 +71,12 @@ module Spamify
     end
   
     def start!
-      @client.start!
+      begin
+        @client.start!
+      rescue => error
+        puts "Error: #{error}\n\t#{error.backtrace.join("\n\t")}"
+        connection_closed(nil)
+      end
     end
   end
 end
