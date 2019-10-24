@@ -57,7 +57,7 @@ module Spamify
       puts "Connection closed at #{Time.now}"
 
       # Reset last retry timestamp if it's been over a minute
-      if !@retry_timestamp || Time.now - @retry_timestamp < 60
+      if !@retry_timestamp || Time.now - @retry_timestamp > 60
         @retry_count = 0
       end
 
