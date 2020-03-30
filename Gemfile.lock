@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/Tak/urika
-  revision: 6611b0c7b3ac8c2d12619bddf8faffb898d7cecf
-  branch: master
+  revision: 716aeb67368a8809726d8e1436c1bd6bb08fd6df
+  branch: trunk
   specs:
     urika (0.1.0)
 
